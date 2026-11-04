@@ -140,7 +140,7 @@ footer {
 </footer>
 
 <script>
-const API = "https://www.elprisetjustnu.se/api/v1/prices";
+const API = "https://spotwatts.com/api/v1/se3";
 
 function dateKey(offset) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -162,17 +162,20 @@ function dateKey(offset) {
   return d.toISOString().slice(0, 10);
 }
 
-function apiUrl(key) {
-  const [year, month, day] = key.split("-");
-  return `${API}/${year}/${month}-${day}_SE3.json?v=${Date.now()}`;
-}
+async function getPrices(which) {
+  const response = await fetch(
+    `${API}/${which}.json?v=${Date.now()}`,
+    { cache: "no-store" }
+  );
 
-async function getPrices(key) {
-  const response = await fetch(apiUrl(key), { cache: "no-store" });
-  if (!response.ok) throw new Error("Prisdata kunde inte hämtas");
+  if (!response.ok) {
+    throw new Error("Prisdata kunde inte hämtas");
+  }
+
   const data = await response.json();
 
-  if (!Array.isArray(data) || data.length < 90) {
+  if (!data.intervals || !data.hours ||
+      data.intervals.length < 90 || data.hours.length < 23) {
     throw new Error("Prislistan är ofullständig");
   }
 
@@ -180,55 +183,57 @@ async function getPrices(key) {
 }
 
 function money(value) {
-  return value.toLocaleString("sv-SE", {
+  return Number(value).toLocaleString("sv-SE", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
 }
 
-function showChart(records) {
+function localTime(timestamp) {
+  return new Date(timestamp).toLocaleTimeString("sv-SE", {
+    timeZone: "Europe/Stockholm",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  });
+}
+
+function showChart(hours) {
   const grid = document.getElementById("price-grid");
   grid.innerHTML = "";
 
-  const hours = [];
+  const values = hours.map(x => Number(x.price));
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
 
-  for (let h = 0; h < 24; h++) {
-    const quarter = records.filter(r =>
-      Number(r.time_start.slice(11, 13)) === h
-    );
+  const sorted = [...values].sort((a, b) => a - b);
+  const lowLimit = sorted[Math.floor(sorted.length * 0.25)];
+  const highLimit = sorted[Math.floor(sorted.length * 0.75)];
 
-    if (quarter.length === 0) continue;
+  hours.forEach((item, index) => {
+    const value = Number(item.price);
 
-    const average = quarter.reduce(
-      (sum, r) => sum + Number(r.SEK_per_kWh), 0
-    ) / quarter.length;
-
-    hours.push({ hour: h, price: average });
-  }
-
-  const values = hours.map(x => x.price).sort((a, b) => a - b);
-  const lowLimit = values[Math.floor(values.length * 0.25)];
-  const highLimit = values[Math.floor(values.length * 0.75)];
-  const max = Math.max(...values, 0.1);
-
-  hours.forEach(item => {
     const wrap = document.createElement("div");
     wrap.className = "hour";
 
     const price = document.createElement("div");
     price.className = "hour-price";
-    price.textContent = money(item.price);
+    price.textContent = money(value);
 
     const bar = document.createElement("div");
     bar.className = "bar";
-    if (item.price <= lowLimit) bar.classList.add("low");
-    if (item.price >= highLimit) bar.classList.add("high");
-    bar.style.height = `${Math.max(5, item.price / max * 105)}px`;
+
+    if (value <= lowLimit) bar.classList.add("low");
+    if (value >= highLimit) bar.classList.add("high");
+
+    const height = 8 + ((value - min) / range) * 100;
+    bar.style.height = `${height}px`;
 
     const label = document.createElement("div");
     label.className = "hour-label";
-    label.textContent = item.hour % 3 === 0
-      ? String(item.hour).padStart(2, "0")
+    label.textContent = index % 3 === 0
+      ? localTime(item.start).slice(0, 2)
       : "";
 
     wrap.append(price, bar, label);
@@ -238,33 +243,36 @@ function showChart(records) {
 
 function findBestNight(today, tomorrow) {
   const overnight = [
-    ...today.filter(r => r.time_start.slice(11, 16) >= "22:00"),
-    ...tomorrow.filter(r => r.time_start.slice(11, 16) < "07:00")
-  ].sort((a, b) =>
-    new Date(a.time_start) - new Date(b.time_start)
-  );
+    ...today.intervals.filter(x =>
+      x.start.slice(11, 16) >= "22:00"
+    ),
+    ...tomorrow.intervals.filter(x =>
+      x.start.slice(11, 16) < "07:00"
+    )
+  ].sort((a, b) => new Date(a.start) - new Date(b.start));
 
   let best = null;
 
+  // 12 kvartsvärden = 3 sammanhängande timmar.
   for (let i = 0; i <= overnight.length - 12; i++) {
     const window = overnight.slice(i, i + 12);
 
-    // Kontrollera att alla 12 kvartstimmar följer direkt på varandra.
-    const continuous = window.every((r, j) =>
+    const continuous = window.every((item, j) =>
       j === 0 ||
-      new Date(r.time_start) - new Date(window[j - 1].time_start) === 900000
+      new Date(item.start).getTime() ===
+      new Date(window[j - 1].end).getTime()
     );
 
     if (!continuous) continue;
 
     const average = window.reduce(
-      (sum, r) => sum + Number(r.SEK_per_kWh), 0
+      (sum, item) => sum + Number(item.price), 0
     ) / 12;
 
     if (!best || average < best.average) {
       best = {
-        start: window[0].time_start,
-        end: window[11].time_end,
+        start: window[0].start,
+        end: window[11].end,
         average
       };
     }
@@ -274,10 +282,11 @@ function findBestNight(today, tomorrow) {
 }
 
 async function loadPrices() {
-  const todayKey = dateKey(0);
   const tomorrowKey = dateKey(1);
+  const todayKey = dateKey(0);
 
   const labelDate = new Date(tomorrowKey + "T12:00:00");
+
   document.getElementById("date").textContent =
     labelDate.toLocaleDateString("sv-SE", {
       weekday: "long",
@@ -289,8 +298,8 @@ async function loadPrices() {
     "Hämtar aktuella prisuppgifter...";
 
   const results = await Promise.allSettled([
-    getPrices(todayKey),
-    getPrices(tomorrowKey)
+    getPrices("today"),
+    getPrices("tomorrow")
   ]);
 
   const today = results[0].status === "fulfilled"
@@ -300,25 +309,22 @@ async function loadPrices() {
     ? results[1].value : null;
 
   if (tomorrow) {
-    showChart(tomorrow);
+    showChart(tomorrow.hours);
+
     document.getElementById("status").textContent =
-      `${tomorrow.length} kvartspriser hämtade för morgondagen. ` +
-      `Timstaplarna visar genomsnittet av kvartsvärdena.`;
+      `${tomorrow.intervals.length} kvartsvärden hämtade för morgondagen. ` +
+      "Staplarna visar timpriset.";
   } else {
     document.getElementById("status").textContent =
-      "Morgondagens priser är ännu inte tillgängliga. " +
-      "Sidan försöker igen automatiskt.";
+      "Morgondagens priser är ännu inte tillgängliga, eller kunde inte hämtas.";
   }
 
   if (today && tomorrow) {
     const best = findBestNight(today, tomorrow);
 
     if (best) {
-      const start = best.start.slice(11, 16);
-      const end = best.end.slice(11, 16);
-
       document.getElementById("charge-time").textContent =
-        `${start}–${end}`;
+        `${localTime(best.start)}–${localTime(best.end)}`;
 
       document.getElementById("charge-price").textContent =
         `Snittpris: ${money(best.average)} kr/kWh`;
@@ -332,6 +338,11 @@ async function loadPrices() {
     document.getElementById("charge-price").textContent =
       "Väntar på prisdata för båda dygnen.";
   }
+
+  document.querySelector("footer").innerHTML =
+    'Spotpris i kr/kWh · Exklusive elnät, energiskatt och moms<br>' +
+    'Källa: <a href="https://spotwatts.com/" target="_blank" ' +
+    'rel="noopener" style="color:inherit">Spotwatts</a> · Uppdateras automatiskt';
 }
 
 loadPrices().catch(error => {
