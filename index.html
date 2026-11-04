@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>El-energitavla</title>
+  <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #14232f;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 { font-size: 42px; }
+    p { font-size: 25px; color: #b8d5df; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>ELTAVLA – TEST</h1>
+    <p>Nest Hub är ansluten!</p>
+    <p>Vår energitavla börjar här.</p>
+  </main>
+  <script>
+    const context =
+      cast.framework.CastReceiverContext.getInstance();
+    context.start();
+  </script>
+</body>
+</html>
