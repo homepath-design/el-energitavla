@@ -2,36 +2,144 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>El-energitavla</title>
-  <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
-  <style>
-    body {
-      margin: 0;
-      background: #14232f;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    h1 { font-size: 42px; }
-    p { font-size: 25px; color: #b8d5df; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El-energitavla</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 24px;
+  background: #14232f;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #456070;
+  padding-bottom: 16px;
+}
+h1 { font-size: 32px; margin: 0; }
+#date { color: #b8d5df; font-size: 18px; }
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 22px;
+}
+.panel {
+  background: #203746;
+  border-radius: 14px;
+  padding: 20px;
+  min-height: 190px;
+}
+.panel h2 {
+  margin: 0 0 14px;
+  font-size: 22px;
+  color: #b8d5df;
+}
+.value { font-size: 38px; font-weight: bold; }
+.sub { color: #b8d5df; font-size: 16px; margin-top: 8px; }
+#prices {
+  grid-column: 1 / -1;
+  min-height: 220px;
+}
+#price-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+}
+.hour {
+  background: #315064;
+  border-radius: 6px;
+  padding: 8px 3px;
+  text-align: center;
+  font-size: 13px;
+}
+.hour strong { display: block; margin-top: 5px; }
+footer {
+  color: #91aab7;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+@media (max-width: 700px) {
+  main { grid-template-columns: 1fr; }
+  #prices { grid-column: auto; }
+  #price-grid { grid-template-columns: repeat(6, 1fr); }
+}
+</style>
 </head>
 <body>
-  <main>
-    <h1>ELTAVLA – TEST</h1>
-    <p>Nest Hub är ansluten!</p>
-    <p>Vår energitavla börjar här.</p>
-  </main>
-  <script>
-    const context =
-      cast.framework.CastReceiverContext.getInstance();
-    context.start();
-  </script>
+<header>
+  <h1>ELENERGI</h1>
+  <div id="date">Laddar datum...</div>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Solceller</h2>
+    <div class="value">3,0 kWp</div>
+    <div class="sub">Installerad effekt</div>
+    <div class="sub">Jönköping · SE3</div>
+  </section>
+
+  <section class="panel">
+    <h2>Billigaste laddning</h2>
+    <div class="value">--:--</div>
+    <div class="sub">3 sammanhängande timmar</div>
+    <div class="sub">Söker nattens bästa period</div>
+  </section>
+
+  <section class="panel" id="prices">
+    <h2>Morgondagens elpriser · SE3</h2>
+    <div id="price-grid">
+      <div class="hour">00–01<strong>--</strong></div>
+      <div class="hour">01–02<strong>--</strong></div>
+      <div class="hour">02–03<strong>--</strong></div>
+      <div class="hour">03–04<strong>--</strong></div>
+      <div class="hour">04–05<strong>--</strong></div>
+      <div class="hour">05–06<strong>--</strong></div>
+      <div class="hour">06–07<strong>--</strong></div>
+      <div class="hour">07–08<strong>--</strong></div>
+      <div class="hour">08–09<strong>--</strong></div>
+      <div class="hour">09–10<strong>--</strong></div>
+      <div class="hour">10–11<strong>--</strong></div>
+      <div class="hour">11–12<strong>--</strong></div>
+      <div class="hour">12–13<strong>--</strong></div>
+      <div class="hour">13–14<strong>--</strong></div>
+      <div class="hour">14–15<strong>--</strong></div>
+      <div class="hour">15–16<strong>--</strong></div>
+      <div class="hour">16–17<strong>--</strong></div>
+      <div class="hour">17–18<strong>--</strong></div>
+      <div class="hour">18–19<strong>--</strong></div>
+      <div class="hour">19–20<strong>--</strong></div>
+      <div class="hour">20–21<strong>--</strong></div>
+      <div class="hour">21–22<strong>--</strong></div>
+      <div class="hour">22–23<strong>--</strong></div>
+      <div class="hour">23–24<strong>--</strong></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Solprognos</h2>
+    <div class="value">-- kWh</div>
+    <div class="sub">Beräknad produktion i morgon</div>
+  </section>
+</main>
+
+<footer>EL-ENERGITAVLA · Uppdateras dagligen</footer>
+
+<script>
+const now = new Date();
+document.getElementById("date").textContent =
+  now.toLocaleDateString("sv-SE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  });
+</script>
 </body>
 </html>
