@@ -9,9 +9,9 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  padding: 24px;
+  padding: 22px;
   background: #14232f;
-  color: #fff;
+  color: white;
   font-family: Arial, sans-serif;
 }
 header {
@@ -19,56 +19,80 @@ header {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #456070;
-  padding-bottom: 16px;
+  padding-bottom: 15px;
 }
-h1 { font-size: 32px; margin: 0; }
-#date { color: #b8d5df; font-size: 18px; }
-main {
+h1 { font-size: 30px; margin: 0; letter-spacing: 2px; }
+#date { color: #b8d5df; font-size: 17px; }
+main { margin-top: 18px; }
+.cards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 22px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
 }
 .panel {
   background: #203746;
-  border-radius: 14px;
-  padding: 20px;
-  min-height: 190px;
+  border-radius: 13px;
+  padding: 18px;
 }
 .panel h2 {
-  margin: 0 0 14px;
-  font-size: 22px;
+  margin: 0 0 12px;
+  font-size: 19px;
   color: #b8d5df;
 }
-.value { font-size: 38px; font-weight: bold; }
-.sub { color: #b8d5df; font-size: 16px; margin-top: 8px; }
-#prices {
-  grid-column: 1 / -1;
-  min-height: 220px;
-}
+.value { font-size: 34px; font-weight: bold; }
+.sub { color: #b8d5df; font-size: 14px; margin-top: 7px; }
+#prices { margin-top: 15px; }
 #price-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  gap: 5px;
+  align-items: end;
+  min-height: 180px;
+  padding-top: 10px;
 }
 .hour {
-  background: #315064;
-  border-radius: 6px;
-  padding: 8px 3px;
   text-align: center;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  height: 160px;
+}
+.hour-price {
+  font-size: 10px;
+  color: #dce8ed;
+  margin-bottom: 5px;
+  white-space: nowrap;
+}
+.bar {
+  width: 100%;
+  min-height: 4px;
+  border-radius: 4px 4px 0 0;
+  background: #4d9bb0;
+}
+.bar.low { background: #53b58b; }
+.bar.high { background: #d98262; }
+.hour-label {
+  font-size: 10px;
+  color: #b8d5df;
+  margin-top: 6px;
+}
+#status {
+  margin-top: 12px;
+  color: #b8d5df;
   font-size: 13px;
 }
-.hour strong { display: block; margin-top: 5px; }
 footer {
   color: #91aab7;
   text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
+  margin-top: 16px;
+  font-size: 12px;
 }
 @media (max-width: 700px) {
-  main { grid-template-columns: 1fr; }
-  #prices { grid-column: auto; }
-  #price-grid { grid-template-columns: repeat(6, 1fr); }
+  body { padding: 12px; }
+  .cards { grid-template-columns: 1fr; }
+  #price-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .hour { height: 125px; }
 }
 </style>
 </head>
@@ -79,67 +103,245 @@ footer {
 </header>
 
 <main>
-  <section class="panel">
-    <h2>Solceller</h2>
-    <div class="value">3,0 kWp</div>
-    <div class="sub">Installerad effekt</div>
-    <div class="sub">Jönköping · SE3</div>
-  </section>
+  <div class="cards">
+    <section class="panel">
+      <h2>Solceller</h2>
+      <div class="value">3,0 kWp</div>
+      <div class="sub">Installerad effekt</div>
+      <div class="sub">Jönköping · SE3</div>
+    </section>
 
-  <section class="panel">
-    <h2>Billigaste laddning</h2>
-    <div class="value">--:--</div>
-    <div class="sub">3 sammanhängande timmar</div>
-    <div class="sub">Söker nattens bästa period</div>
-  </section>
+    <section class="panel">
+      <h2>Billigaste laddning i natt</h2>
+      <div class="value" id="charge-time">--:--</div>
+      <div class="sub" id="charge-price">Söker nattens priser...</div>
+      <div class="sub">3 sammanhängande timmar</div>
+    </section>
+
+    <section class="panel">
+      <h2>Solprognos i morgon</h2>
+      <div class="value">-- kWh</div>
+      <div class="sub">Kommer i nästa steg</div>
+      <div class="sub">Prognos för Jönköping</div>
+    </section>
+  </div>
 
   <section class="panel" id="prices">
     <h2>Morgondagens elpriser · SE3</h2>
-    <div id="price-grid">
-      <div class="hour">00–01<strong>--</strong></div>
-      <div class="hour">01–02<strong>--</strong></div>
-      <div class="hour">02–03<strong>--</strong></div>
-      <div class="hour">03–04<strong>--</strong></div>
-      <div class="hour">04–05<strong>--</strong></div>
-      <div class="hour">05–06<strong>--</strong></div>
-      <div class="hour">06–07<strong>--</strong></div>
-      <div class="hour">07–08<strong>--</strong></div>
-      <div class="hour">08–09<strong>--</strong></div>
-      <div class="hour">09–10<strong>--</strong></div>
-      <div class="hour">10–11<strong>--</strong></div>
-      <div class="hour">11–12<strong>--</strong></div>
-      <div class="hour">12–13<strong>--</strong></div>
-      <div class="hour">13–14<strong>--</strong></div>
-      <div class="hour">14–15<strong>--</strong></div>
-      <div class="hour">15–16<strong>--</strong></div>
-      <div class="hour">16–17<strong>--</strong></div>
-      <div class="hour">17–18<strong>--</strong></div>
-      <div class="hour">18–19<strong>--</strong></div>
-      <div class="hour">19–20<strong>--</strong></div>
-      <div class="hour">20–21<strong>--</strong></div>
-      <div class="hour">21–22<strong>--</strong></div>
-      <div class="hour">22–23<strong>--</strong></div>
-      <div class="hour">23–24<strong>--</strong></div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2>Solprognos</h2>
-    <div class="value">-- kWh</div>
-    <div class="sub">Beräknad produktion i morgon</div>
+    <div id="price-grid"></div>
+    <div id="status">Hämtar priser...</div>
   </section>
 </main>
 
-<footer>EL-ENERGITAVLA · Uppdateras dagligen</footer>
+<footer>
+  Spotpris i kr/kWh · Exklusive elnät, energiskatt och moms
+  <br>
+  Källa: Elprisetjustnu.se · Uppdateras automatiskt
+</footer>
 
 <script>
-const now = new Date();
-document.getElementById("date").textContent =
-  now.toLocaleDateString("sv-SE", {
-    weekday: "long",
-    day: "numeric",
-    month: "long"
+const API = "https://www.elprisetjustnu.se/api/v1/prices";
+
+function dateKey(offset) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Stockholm",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+
+  const p = {};
+  parts.forEach(x => p[x.type] = x.value);
+
+  const d = new Date(Date.UTC(
+    Number(p.year),
+    Number(p.month) - 1,
+    Number(p.day) + offset
+  ));
+
+  return d.toISOString().slice(0, 10);
+}
+
+function apiUrl(key) {
+  const [year, month, day] = key.split("-");
+  return `${API}/${year}/${month}-${day}_SE3.json?v=${Date.now()}`;
+}
+
+async function getPrices(key) {
+  const response = await fetch(apiUrl(key), { cache: "no-store" });
+  if (!response.ok) throw new Error("Prisdata kunde inte hämtas");
+  const data = await response.json();
+
+  if (!Array.isArray(data) || data.length < 90) {
+    throw new Error("Prislistan är ofullständig");
+  }
+
+  return data;
+}
+
+function money(value) {
+  return value.toLocaleString("sv-SE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   });
+}
+
+function showChart(records) {
+  const grid = document.getElementById("price-grid");
+  grid.innerHTML = "";
+
+  const hours = [];
+
+  for (let h = 0; h < 24; h++) {
+    const quarter = records.filter(r =>
+      Number(r.time_start.slice(11, 13)) === h
+    );
+
+    if (quarter.length === 0) continue;
+
+    const average = quarter.reduce(
+      (sum, r) => sum + Number(r.SEK_per_kWh), 0
+    ) / quarter.length;
+
+    hours.push({ hour: h, price: average });
+  }
+
+  const values = hours.map(x => x.price).sort((a, b) => a - b);
+  const lowLimit = values[Math.floor(values.length * 0.25)];
+  const highLimit = values[Math.floor(values.length * 0.75)];
+  const max = Math.max(...values, 0.1);
+
+  hours.forEach(item => {
+    const wrap = document.createElement("div");
+    wrap.className = "hour";
+
+    const price = document.createElement("div");
+    price.className = "hour-price";
+    price.textContent = money(item.price);
+
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    if (item.price <= lowLimit) bar.classList.add("low");
+    if (item.price >= highLimit) bar.classList.add("high");
+    bar.style.height = `${Math.max(5, item.price / max * 105)}px`;
+
+    const label = document.createElement("div");
+    label.className = "hour-label";
+    label.textContent = item.hour % 3 === 0
+      ? String(item.hour).padStart(2, "0")
+      : "";
+
+    wrap.append(price, bar, label);
+    grid.appendChild(wrap);
+  });
+}
+
+function findBestNight(today, tomorrow) {
+  const overnight = [
+    ...today.filter(r => r.time_start.slice(11, 16) >= "22:00"),
+    ...tomorrow.filter(r => r.time_start.slice(11, 16) < "07:00")
+  ].sort((a, b) =>
+    new Date(a.time_start) - new Date(b.time_start)
+  );
+
+  let best = null;
+
+  for (let i = 0; i <= overnight.length - 12; i++) {
+    const window = overnight.slice(i, i + 12);
+
+    // Kontrollera att alla 12 kvartstimmar följer direkt på varandra.
+    const continuous = window.every((r, j) =>
+      j === 0 ||
+      new Date(r.time_start) - new Date(window[j - 1].time_start) === 900000
+    );
+
+    if (!continuous) continue;
+
+    const average = window.reduce(
+      (sum, r) => sum + Number(r.SEK_per_kWh), 0
+    ) / 12;
+
+    if (!best || average < best.average) {
+      best = {
+        start: window[0].time_start,
+        end: window[11].time_end,
+        average
+      };
+    }
+  }
+
+  return best;
+}
+
+async function loadPrices() {
+  const todayKey = dateKey(0);
+  const tomorrowKey = dateKey(1);
+
+  const labelDate = new Date(tomorrowKey + "T12:00:00");
+  document.getElementById("date").textContent =
+    labelDate.toLocaleDateString("sv-SE", {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    });
+
+  document.getElementById("status").textContent =
+    "Hämtar aktuella prisuppgifter...";
+
+  const results = await Promise.allSettled([
+    getPrices(todayKey),
+    getPrices(tomorrowKey)
+  ]);
+
+  const today = results[0].status === "fulfilled"
+    ? results[0].value : null;
+
+  const tomorrow = results[1].status === "fulfilled"
+    ? results[1].value : null;
+
+  if (tomorrow) {
+    showChart(tomorrow);
+    document.getElementById("status").textContent =
+      `${tomorrow.length} kvartspriser hämtade för morgondagen. ` +
+      `Timstaplarna visar genomsnittet av kvartsvärdena.`;
+  } else {
+    document.getElementById("status").textContent =
+      "Morgondagens priser är ännu inte tillgängliga. " +
+      "Sidan försöker igen automatiskt.";
+  }
+
+  if (today && tomorrow) {
+    const best = findBestNight(today, tomorrow);
+
+    if (best) {
+      const start = best.start.slice(11, 16);
+      const end = best.end.slice(11, 16);
+
+      document.getElementById("charge-time").textContent =
+        `${start}–${end}`;
+
+      document.getElementById("charge-price").textContent =
+        `Snittpris: ${money(best.average)} kr/kWh`;
+    } else {
+      document.getElementById("charge-time").textContent = "--:--";
+      document.getElementById("charge-price").textContent =
+        "Hittade inget komplett laddningsfönster.";
+    }
+  } else {
+    document.getElementById("charge-time").textContent = "--:--";
+    document.getElementById("charge-price").textContent =
+      "Väntar på prisdata för båda dygnen.";
+  }
+}
+
+loadPrices().catch(error => {
+  document.getElementById("status").textContent =
+    "Kunde inte läsa prisdata: " + error.message;
+});
+
+setInterval(() => {
+  loadPrices().catch(() => {});
+}, 15 * 60 * 1000);
 </script>
 </body>
 </html>
