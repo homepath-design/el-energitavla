@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Starta El-energitavla</title>
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #14232f;
+      color: white;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    button {
+      padding: 18px 28px;
+      font-size: 20px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>El-energitavla</h1>
+  <p>Starta energitavlan på din Nest Hub.</p>
+  <google-cast-launcher></google-cast-launcher>
+  <script>
+    window['__onGCastApiAvailable'] = function(isAvailable) {
+      if (!isAvailable) return;
+      const context = cast.framework.CastContext.getInstance();
+      context.setOptions({
+        receiverApplicationId: 'BB63E39C',
+        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+      });
+    };
+  </script>
+</body>
+</html>
