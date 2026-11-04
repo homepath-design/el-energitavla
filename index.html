@@ -270,7 +270,58 @@ function showChart(todayHours, tomorrowHours) {
     grid.appendChild(wrap);
   });
 }
+function updateCurrentPrice(today, tomorrow) {
+  const priceElement = document.getElementById("current-price");
+  const statusElement = document.getElementById("current-price-status");
 
+  if (!today || !today.intervals) {
+    priceElement.textContent = "-- öre";
+    statusElement.textContent = "Aktuellt pris saknas";
+    return;
+  }
+
+  const now = Date.now();
+
+  const allIntervals = [
+    ...today.intervals,
+    ...(tomorrow ? tomorrow.intervals : [])
+  ].filter(item => new Date(item.end).getTime() > now);
+
+  const current = allIntervals.find(item =>
+    new Date(item.start).getTime() <= now &&
+    new Date(item.end).getTime() > now
+  );
+
+  if (!current) {
+    priceElement.textContent = "-- öre";
+    statusElement.textContent = "Kvartens pris saknas";
+    return;
+  }
+
+  const prices = allIntervals
+    .map(item => Number(item.price))
+    .filter(value => Number.isFinite(value))
+    .sort((a, b) => a - b);
+
+  const lowLimit = prices[Math.floor((prices.length - 1) * 0.33)];
+  const highLimit = prices[Math.floor((prices.length - 1) * 0.67)];
+
+  const value = Number(current.price);
+
+  priceElement.textContent = money(value * 100) + " öre";
+  priceElement.classList.remove("price-green", "price-yellow", "price-red");
+
+  if (value <= lowLimit) {
+    priceElement.classList.add("price-green");
+    statusElement.textContent = "Bland de 33 % billigaste · SE3";
+  } else if (value >= highLimit) {
+    priceElement.classList.add("price-red");
+    statusElement.textContent = "Bland de 33 % dyraste · SE3";
+  } else {
+    priceElement.classList.add("price-yellow");
+    statusElement.textContent = "Mellannivå · SE3";
+  }
+}
 function findBestNight(today, tomorrow) {
   const overnight = [
     ...today.intervals.filter(x =>
