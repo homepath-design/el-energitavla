@@ -104,28 +104,26 @@ footer {
 
 <main>
   <div class="cards">
-    <section class="panel">
-      <h2>Solceller</h2>
-      <div class="value">3,0 kWp</div>
-      <div class="sub">Installerad effekt</div>
-      <div class="sub">Jönköping · SE3</div>
-    </section>
+  <section class="panel">
+    <h2>Elpris just nu</h2>
+    <div class="value" id="current-price">-- öre</div>
+    <div class="sub" id="current-price-status">Hämtar aktuellt pris...</div>
+  </section>
 
-    <section class="panel">
-      <h2>Billigaste laddning i natt</h2>
-      <div class="value" id="charge-time">--:--</div>
-      <div class="sub" id="charge-price">Söker nattens priser...</div>
-      <div class="sub">3 sammanhängande timmar</div>
-    </section>
+  <section class="panel">
+    <h2>Billigaste laddning i natt</h2>
+    <div class="value" id="charge-time">--:--</div>
+    <div class="sub" id="charge-price">Söker nattens priser...</div>
+    <div class="sub">3 sammanhängande timmar</div>
+  </section>
 
-    <section class="panel">
-      <h2>Solprognos i morgon</h2>
-      <div class="value">-- kWh</div>
-      <div class="sub">Kommer i nästa steg</div>
-      <div class="sub">Prognos för Jönköping</div>
-    </section>
-  </div>
-
+  <section class="panel">
+    <h2>Solprognos i morgon</h2>
+    <div class="value">-- kWh</div>
+    <div class="sub">Kommer i nästa steg</div>
+    <div class="sub">Prognos för Jönköping</div>
+  </section>
+</div>
   <section class="panel" id="prices">
     <h2>Morgondagens elpriser · SE3</h2>
     <div id="price-grid"></div>
