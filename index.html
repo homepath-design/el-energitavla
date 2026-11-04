@@ -198,9 +198,24 @@ function localTime(timestamp) {
   });
 }
 
-function showChart(hours) {
+function showChart(todayHours, tomorrowHours) {
   const grid = document.getElementById("price-grid");
   grid.innerHTML = "";
+
+  const currentHour = Number(
+    new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Europe/Stockholm",
+      hour: "2-digit",
+      hourCycle: "h23"
+    }).format(new Date())
+  );
+
+  const remainingToday = todayHours.filter(item =>
+    Number(localTime(item.start).slice(0, 2)) >= currentHour
+  );
+
+  const tomorrowStartIndex = remainingToday.length;
+  const hours = [...remainingToday, ...tomorrowHours];
 
   const values = hours.map(x => Number(x.price));
   const min = Math.min(...values);
@@ -232,9 +247,15 @@ function showChart(hours) {
 
     const label = document.createElement("div");
     label.className = "hour-label";
-    label.textContent = index % 3 === 0
-      ? localTime(item.start).slice(0, 2)
-      : "";
+
+    const hour = localTime(item.start).slice(0, 2);
+
+    label.textContent =
+      index === tomorrowStartIndex
+        ? "M " + hour
+        : index % 3 === 0
+          ? hour
+          : "";
 
     wrap.append(price, bar, label);
     grid.appendChild(wrap);
@@ -309,7 +330,7 @@ async function loadPrices() {
     ? results[1].value : null;
 
   if (tomorrow) {
-    showChart(tomorrow.hours);
+    showChart(today ? today.hours : [], tomorrow.hours);
 
     document.getElementById("status").textContent =
       `${tomorrow.intervals.length} kvartsvärden hämtade för morgondagen. ` +
