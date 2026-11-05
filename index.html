@@ -288,6 +288,7 @@ function updateCurrentPrice(today, tomorrow) {
   ].filter(item => new Date(item.end).getTime() > now);
 
   const current = allIntervals.find(item =>
+    console.log("AKTUELLT INTERVALL:", current);
     new Date(item.start).getTime() <= now &&
     new Date(item.end).getTime() > now
   );
