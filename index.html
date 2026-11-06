@@ -1,561 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#14232f">
 <title>El-energitavla</title>
 <style>
-  * { box-sizing: border-box; }
-
-  :root {
-    --bg: #14232f;
-    --panel: #203746;
-    --panel-soft: #294555;
-    --line: #456070;
-    --text: #ffffff;
-    --muted: #b8d5df;
-    --green: #53d69a;
-    --yellow: #ffd166;
-    --red: #ff806e;
-  }
-
-  body {
-    margin: 0;
-    padding: 18px 22px;
-    background: var(--bg);
-    color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 12px;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: clamp(22px, 3vw, 30px);
-    letter-spacing: 1.5px;
-    font-weight: 700;
-  }
-
-  #date {
-    color: var(--muted);
-    font-size: 15px;
-    text-align: right;
-  }
-
-  main { margin-top: 15px; }
-
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 13px;
-  }
-
-  .panel {
-    min-width: 0;
-    background: var(--panel);
-    border: 1px solid rgba(184, 213, 223, 0.08);
-    border-radius: 13px;
-    padding: 15px 17px;
-  }
-
-  .panel h2 {
-    margin: 0 0 9px;
-    color: var(--muted);
-    font-size: 17px;
-    font-weight: 600;
-  }
-
-  .value {
-    font-size: clamp(27px, 3.2vw, 38px);
-    line-height: 1.1;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .price-green { color: var(--green); }
-  .price-yellow { color: var(--yellow); }
-  .price-red { color: var(--red); }
-
-  .sub {
-    min-height: 18px;
-    margin-top: 7px;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.25;
-  }
-
-  #prices {
-    margin-top: 13px;
-    padding: 13px 16px 12px;
-  }
-
-  .chart-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .chart-heading h2 { margin: 0; }
-
-  #chart-note {
-    color: var(--muted);
-    font-size: 12px;
-    text-align: right;
-  }
-
-  .chart-day { margin-top: 8px; }
-
-  .day-label {
-    margin: 0 0 5px;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .price-grid {
-    display: grid;
-    grid-template-columns: repeat(24, minmax(0, 1fr));
-    gap: 4px;
-    align-items: end;
-    min-height: 132px;
-  }
-
-  .hour {
-    min-width: 0;
-    height: 132px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: stretch;
-    gap: 4px;
-    text-align: center;
-  }
-
-  .hour-bar-wrap {
-    height: 91px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-
-  .hour-bar {
-    width: 72%;
-    min-height: 3px;
-    border-radius: 4px 4px 1px 1px;
-    background: #70a9c2;
-  }
-
-  .hour-price {
-    color: #ffffff;
-    font-size: 10px;
-    line-height: 1.1;
-    white-space: nowrap;
-  }
-
-  .hour-time {
-    color: var(--muted);
-    font-size: 10px;
-    line-height: 1;
-  }
-
-  .hour.current .hour-bar {
-    background: var(--yellow);
-    outline: 1px solid #ffffff;
-    outline-offset: 1px;
-  }
-
-  .hour.past { opacity: 0.38; }
-
-  #status {
-    margin-top: 9px;
-    color: var(--muted);
-    font-size: 12px;
-  }
-
-  footer {
-    margin-top: 8px;
-    color: #89a8b7;
-    font-size: 10px;
-    text-align: right;
-  }
-
-  @media (max-width: 700px) {
-    body { padding: 12px; }
-    header { align-items: flex-start; }
-    h1 { font-size: 21px; }
-    #date { font-size: 12px; }
-    .cards { grid-template-columns: 1fr; gap: 8px; }
-    .panel { padding: 13px; }
-    .value { font-size: 28px; }
-    #prices { overflow: hidden; }
-    .price-grid { gap: 2px; }
-    .hour-price { font-size: 8px; }
-    .hour-time { font-size: 8px; }
-  }
+*{box-sizing:border-box}:root{--bg:#14232f;--panel:#203746;--line:#456070;--text:#fff;--muted:#b8d5df;--green:#53d69a;--yellow:#ffd166;--red:#ff806e}
+body{margin:0;padding:18px 22px;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px}
+h1{margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:1.5px}#date{color:var(--muted);font-size:15px;text-align:right}
+main{margin-top:15px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.panel{min-width:0;background:var(--panel);border:1px solid #ffffff14;border-radius:13px;padding:15px 17px}
+.panel h2{margin:0 0 9px;color:var(--muted);font-size:17px;font-weight:600}
+.value{font-size:clamp(27px,3.2vw,38px);line-height:1.1;font-weight:700;font-variant-numeric:tabular-nums}
+.price-green{color:var(--green)}.price-yellow{color:var(--yellow)}.price-red{color:var(--red)}
+.sub{min-height:18px;margin-top:7px;color:var(--muted);font-size:13px;line-height:1.25}
+.solar-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:5px}
+.solar-label{color:var(--muted);font-size:14px}.solar-value{font-size:25px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+#prices{margin-top:13px;padding:13px 16px 12px}.chart-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+.chart-heading h2{margin:0}#chart-note{color:var(--muted);font-size:12px;text-align:right}.chart-day{margin-top:8px}
+.day-label{margin:0 0 5px;color:var(--muted);font-size:12px;font-weight:600}
+.price-grid{display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:4px;align-items:end;min-height:132px}
+.hour{min-width:0;height:132px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;text-align:center}
+.hour-bar-wrap{height:91px;display:flex;align-items:flex-end;justify-content:center}
+.hour-bar{width:72%;min-height:3px;border-radius:4px 4px 1px 1px;background:#70a9c2}
+.hour-price{color:#fff;font-size:10px;white-space:nowrap}.hour-time{color:var(--muted);font-size:10px;line-height:1}
+.hour.current .hour-bar{background:var(--yellow);outline:1px solid #fff;outline-offset:1px}.hour.past{opacity:.38}
+#status{margin-top:9px;color:var(--muted);font-size:12px}footer{margin-top:8px;color:#89a8b7;font-size:10px;text-align:right}
+@media(max-width:700px){body{padding:12px}header{align-items:flex-start}h1{font-size:21px}#date{font-size:12px}.cards{grid-template-columns:1fr;gap:8px}.panel{padding:13px}.value{font-size:28px}#prices{overflow:hidden}.price-grid{gap:2px}.hour-price,.hour-time{font-size:8px}}
 </style>
 </head>
 <body>
-<header>
-  <h1>EL-ENERGITAVLA</h1>
-  <div id="date">Hämtar datum...</div>
-</header>
-
+<header><h1>EL-ENERGITAVLA</h1><div id="date">Hämtar datum...</div></header>
 <main>
-  <div class="cards">
-    <section class="panel">
-      <h2>Elpris just nu</h2>
-      <div class="value" id="current-price">-- öre</div>
-      <div class="sub" id="current-price-status">Hämtar aktuellt pris...</div>
-    </section>
-
-    <section class="panel">
-      <h2>Billigaste laddning i natt</h2>
-      <div class="value" id="charge-time">--:--</div>
-      <div class="sub" id="charge-price">Söker nattens priser...</div>
-      <div class="sub">3 sammanhängande timmar</div>
-    </section>
-
-    <section class="panel">
-      <h2>Solprognos i morgon</h2>
-      <div class="value">-- kWh</div>
-      <div class="sub">Prognos kommer i ett senare steg</div>
-      <div class="sub">Jönköping</div>
-    </section>
-  </div>
-
-  <section class="panel" id="prices">
-    <div class="chart-heading">
-      <h2>Elpriser · SE3</h2>
-      <div id="chart-note">Timpriser · öre/kWh</div>
-    </div>
-
-    <div class="chart-day">
-      <div class="day-label">IDAG – återstående timmar</div>
-      <div class="price-grid" id="today-grid"></div>
-    </div>
-
-    <div class="chart-day">
-      <div class="day-label">IMORGON</div>
-      <div class="price-grid" id="tomorrow-grid"></div>
-    </div>
-
-    <div id="status">Hämtar elpriser...</div>
-  </section>
+<div class="cards">
+<section class="panel"><h2>Elpris just nu</h2><div class="value" id="current-price">-- öre</div><div class="sub" id="current-price-status">Hämtar aktuellt pris...</div></section>
+<section class="panel"><h2>Billigaste laddning i natt</h2><div class="value" id="charge-time">--:--</div><div class="sub" id="charge-price">Söker nattens priser...</div><div class="sub">3 sammanhängande timmar</div></section>
+<section class="panel"><h2>Solprognos</h2><div class="solar-row"><span class="solar-label">Idag</span><span class="solar-value" id="solar-today">-- kWh</span></div><div class="solar-row"><span class="solar-label">Imorgon</span><span class="solar-value" id="solar-tomorrow">-- kWh</span></div><div class="sub" id="solar-status">Hämtar väderprognos...</div><div class="sub">3,0 kWp · Jönköping</div></section>
+</div>
+<section class="panel" id="prices">
+<div class="chart-heading"><h2>Elpriser · SE3</h2><div id="chart-note">Timpriser · öre/kWh</div></div>
+<div class="chart-day"><div class="day-label">IDAG – återstående timmar</div><div class="price-grid" id="today-grid"></div></div>
+<div class="chart-day"><div class="day-label">IMORGON</div><div class="price-grid" id="tomorrow-grid"></div></div>
+<div id="status">Hämtar elpriser...</div></section>
 </main>
-
-<footer>Prisdata: Spotwatts · Elområde SE3</footer>
-
+<footer>Prisdata: Spotwatts · Elområde SE3 · Solprognos: Open-Meteo</footer>
 <script>
 "use strict";
-
-const API_TODAY = "https://spotwatts.com/api/v1/se3/today.json";
-const API_TOMORROW = "https://spotwatts.com/api/v1/se3/tomorrow.json";
-const TIME_ZONE = "Europe/Stockholm";
-
-let todayData = null;
-let tomorrowData = null;
-
-const money = value =>
-  new Intl.NumberFormat("sv-SE", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(value);
-
-function stockholmParts(date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23"
-  }).formatToParts(date);
-
-  return Object.fromEntries(parts.map(part => [part.type, part.value]));
+const API_TODAY="https://spotwatts.com/api/v1/se3/today.json";
+const API_TOMORROW="https://spotwatts.com/api/v1/se3/tomorrow.json";
+const SOLAR_API="https://api.open-meteo.com/v1/forecast?latitude=57.7826&longitude=14.1618&hourly=global_tilted_irradiance&tilt=6.8&azimuth=-10&past_hours=24&forecast_days=2&timezone=Europe%2FStockholm";
+const TZ="Europe/Stockholm",KWP=3,PERFORMANCE=.85;
+let todayData=null,tomorrowData=null;
+const money=n=>new Intl.NumberFormat("sv-SE",{maximumFractionDigits:0}).format(n);
+const intervals=d=>d&&Array.isArray(d.intervals)?d.intervals:[];
+const price=x=>Number(x.price);
+function dateKey(d){let p=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`}
+function hourAt(d){return Number(new Intl.DateTimeFormat("en-GB",{timeZone:TZ,hour:"2-digit",hourCycle:"h23"}).format(d))}
+function updateHeader(){document.getElementById("date").textContent=new Intl.DateTimeFormat("sv-SE",{timeZone:TZ,weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"}).format(new Date())}
+async function getJson(url){let r=await fetch(url,{cache:"no-store"});if(!r.ok){let m="";try{m=(await r.json()).message||""}catch(e){}throw Error(m||`HTTP ${r.status}`)}return r.json()}
+function updateCurrent(){
+ let el=document.getElementById("current-price"),sub=document.getElementById("current-price-status"),now=Date.now();
+ let all=[...intervals(todayData),...intervals(tomorrowData)].filter(x=>new Date(x.end).getTime()>now);
+ let cur=all.find(x=>new Date(x.start).getTime()<=now&&new Date(x.end).getTime()>now);
+ el.classList.remove("price-green","price-yellow","price-red");
+ if(!cur||!Number.isFinite(price(cur))){el.textContent="-- öre";sub.textContent=todayData?"Aktuellt 15-minuterspris saknas":"Dagens priser kunde inte hämtas";return}
+ let sorted=all.map(price).filter(Number.isFinite).sort((a,b)=>a-b),p=price(cur);
+ el.textContent=`${money(p*100)} öre`;
+ if(sorted.length<3){sub.textContent="Pris hämtat · jämförelse saknas";return}
+ let lo=sorted[Math.floor((sorted.length-1)/3)],hi=sorted[Math.floor((sorted.length-1)*2/3)];
+ if(p<=lo){el.classList.add("price-green");sub.textContent="Bland de 33 % billigaste tillgängliga kvartarna"}
+ else if(p>=hi){el.classList.add("price-red");sub.textContent="Bland de 33 % dyraste tillgängliga kvartarna"}
+ else{el.classList.add("price-yellow");sub.textContent="Mellannivå · jämfört med tillgängliga kvartpriser"}
+ if(!tomorrowData)sub.textContent+=" · endast dagens priser publicerade";
 }
-
-function updateHeader() {
-  const now = new Date();
-  document.getElementById("date").textContent =
-    new Intl.DateTimeFormat("sv-SE", {
-      timeZone: TIME_ZONE,
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      hour: "2-digit",
-      minute: "2-digit"
-    }).format(now);
+function renderGrid(data,id,isToday){
+ let grid=document.getElementById(id);grid.replaceChildren();let hours=data&&Array.isArray(data.hours)?data.hours:[];
+ let now=Date.now(),max=Math.max(.01,...hours.map(x=>Number(x.price)).filter(Number.isFinite));
+ hours.forEach(item=>{
+  let p=Number(item.price);if(!Number.isFinite(p))return;
+  let start=new Date(item.start),end=new Date(item.end),h=start.getHours(),wrap=document.createElement("div");
+  wrap.className="hour";if(now>=start&&now<end)wrap.classList.add("current");if(isToday&&end<=now)wrap.classList.add("past");
+  let bw=document.createElement("div");bw.className="hour-bar-wrap";let bar=document.createElement("div");bar.className="hour-bar";
+  bar.style.height=`${Math.max(3,p/max*88)}px`;bar.title=`${String(h).padStart(2,"0")}:00 · ${money(p*100)} öre/kWh`;bw.appendChild(bar);
+  let pl=document.createElement("div");pl.className="hour-price";pl.textContent=money(p*100);
+  let tl=document.createElement("div");tl.className="hour-time";tl.textContent=String(h).padStart(2,"0");wrap.append(bw,pl,tl);grid.appendChild(wrap);
+ });
+ if(!hours.length){let m=document.createElement("div");m.className="sub";m.textContent=isToday?"Dagens priser saknas":"Morgondagens priser är ännu inte publicerade";grid.appendChild(m)}
 }
-
-async function fetchPrices(url) {
-  const response = await fetch(url, { cache: "no-store" });
-
-  if (!response.ok) {
-    let detail = "";
-    try {
-      const errorBody = await response.json();
-      detail = errorBody.message || "";
-    } catch (_) {}
-    const error = new Error(detail || `HTTP ${response.status}`);
-    error.status = response.status;
-    throw error;
-  }
-
-  return response.json();
+function findCharge(){
+ let te=document.getElementById("charge-time"),pe=document.getElementById("charge-price");
+ let a=[...intervals(todayData),...intervals(tomorrowData)].sort((x,y)=>new Date(x.start)-new Date(y.start)),now=Date.now(),c=[];
+ for(let i=0;i<=a.length-12;i++){
+  let w=a.slice(i,i+12),s=new Date(w[0].start),e=new Date(w[11].end);if(s<=now)continue;
+  let eh=hourAt(e),ep=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:TZ,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(e).map(x=>[x.type,x.value]));
+  if(!(hourAt(s)>=22||hourAt(s)<7)||!(eh<7||(eh===7&&Number(ep.minute)===0)))continue;
+  let ok=true;for(let j=1;j<12;j++)if(new Date(w[j-1].end).getTime()!==new Date(w[j].start).getTime()){ok=false;break}if(!ok)continue;
+  let v=w.map(price);if(!v.every(Number.isFinite))continue;c.push({s,e,avg:v.reduce((x,y)=>x+y,0)/12});
+ }
+ if(!c.length){te.textContent="--:--";pe.textContent=tomorrowData?"Ingen komplett nattperiod hittades":"Väntar på morgondagens priser";return}
+ c.sort((x,y)=>x.avg-y.avg);let b=c[0],fmt=d=>new Intl.DateTimeFormat("sv-SE",{timeZone:TZ,hour:"2-digit",minute:"2-digit"}).format(d);
+ te.textContent=`${fmt(b.s)}–${fmt(b.e)}`;pe.textContent=`Snitt ${money(b.avg*100)} öre/kWh`;
 }
-
-function validIntervals(data) {
-  return data && Array.isArray(data.intervals) ? data.intervals : [];
+function render(){
+ updateHeader();updateCurrent();renderGrid(todayData,"today-grid",true);renderGrid(tomorrowData,"tomorrow-grid",false);findCharge();
+ let s=document.getElementById("status");
+ s.textContent=todayData&&tomorrowData?"Priserna är uppdaterade · dagens och morgondagens priser visas":todayData?"Dagens priser visas. Morgondagens priser är ännu inte publicerade (brukar komma omkring kl. 13).":"Kunde inte hämta dagens priser. Kontrollera anslutningen eller försök igen senare.";
 }
-
-function intervalPrice(item) {
-  // Spotwatts price is SEK/kWh before VAT. Keep the same price basis
-  // throughout the dashboard and convert SEK to öre for display.
-  return Number(item.price);
+async function loadPrices(){
+ document.getElementById("status").textContent="Hämtar elpriser...";
+ let [a,b]=await Promise.allSettled([getJson(API_TODAY),getJson(API_TOMORROW)]);
+ todayData=a.status==="fulfilled"?a.value:null;tomorrowData=b.status==="fulfilled"?b.value:null;
+ if(a.status==="rejected")console.error("Dagens elpriser:",a.reason);if(b.status==="rejected")console.info("Morgondagens elpriser:",b.reason);render();
 }
-
-function getCurrentInterval(intervals, nowMs) {
-  return intervals.find(item => {
-    const start = new Date(item.start).getTime();
-    const end = new Date(item.end).getTime();
-    return Number.isFinite(start) && Number.isFinite(end) &&
-      start <= nowMs && end > nowMs;
-  });
+async function loadSolar(){
+ let t=document.getElementById("solar-today"),m=document.getElementById("solar-tomorrow"),s=document.getElementById("solar-status");
+ try{
+  let d=await getJson(SOLAR_API),times=d.hourly.time,gti=d.hourly.global_tilted_irradiance;
+  let today=dateKey(new Date()),tomorrow=dateKey(new Date(Date.now()+86400000));
+  function estimate(key){let sum=0,n=0;times.forEach((x,i)=>{if(x.slice(0,10)===key&&Number.isFinite(Number(gti[i]))){sum+=Number(gti[i]);n++}});return n?sum/1000*KWP*PERFORMANCE:null}
+  let a=estimate(today),b=estimate(tomorrow);
+  t.textContent=a===null?"-- kWh":`${a.toFixed(1).replace(".",",")} kWh`;
+  m.textContent=b===null?"-- kWh":`${b.toFixed(1).replace(".",",")} kWh`;
+  s.textContent="Väderbaserad uppskattning · inte uppmätt produktion";
+ }catch(e){console.error("Solprognos:",e);t.textContent="-- kWh";m.textContent="-- kWh";s.textContent="Solprognosen kunde inte hämtas just nu"}
 }
-
-function updateCurrentPrice() {
-  const priceElement = document.getElementById("current-price");
-  const statusElement = document.getElementById("current-price-status");
-  const now = Date.now();
-
-  const allFutureIntervals = [
-    ...validIntervals(todayData),
-    ...validIntervals(tomorrowData)
-  ].filter(item => new Date(item.end).getTime() > now);
-
-  const current = getCurrentInterval(allFutureIntervals, now);
-
-  priceElement.classList.remove("price-green", "price-yellow", "price-red");
-
-  if (!current || !Number.isFinite(intervalPrice(current))) {
-    priceElement.textContent = "-- öre";
-    statusElement.textContent = todayData
-      ? "Aktuellt 15-minuterspris saknas"
-      : "Dagens priser kunde inte hämtas";
-    return;
-  }
-
-  const prices = allFutureIntervals
-    .map(intervalPrice)
-    .filter(Number.isFinite)
-    .sort((a, b) => a - b);
-
-  if (prices.length < 3) {
-    priceElement.textContent = `${money(intervalPrice(current) * 100)} öre`;
-    statusElement.textContent = "Pris hämtat · jämförelse saknas";
-    return;
-  }
-
-  const lowLimit = prices[Math.floor((prices.length - 1) / 3)];
-  const highLimit = prices[Math.floor((prices.length - 1) * 2 / 3)];
-  const currentPrice = intervalPrice(current);
-
-  priceElement.textContent = `${money(currentPrice * 100)} öre`;
-
-  if (currentPrice <= lowLimit) {
-    priceElement.classList.add("price-green");
-    statusElement.textContent = "Bland de 33 % billigaste tillgängliga kvartarna";
-  } else if (currentPrice >= highLimit) {
-    priceElement.classList.add("price-red");
-    statusElement.textContent = "Bland de 33 % dyraste tillgängliga kvartarna";
-  } else {
-    priceElement.classList.add("price-yellow");
-    statusElement.textContent = "Mellannivå · jämfört med tillgängliga kvartpriser";
-  }
-
-  if (!tomorrowData) {
-    statusElement.textContent += " · endast dagens priser publicerade";
-  }
-}
-
-function renderDayGrid(data, gridId, isToday) {
-  const grid = document.getElementById(gridId);
-  grid.replaceChildren();
-
-  const hours = data && Array.isArray(data.hours) ? data.hours : [];
-  const now = Date.now();
-  const currentHour = new Date(now).getHours();
-  const maxPrice = Math.max(0.01, ...hours.map(item => Number(item.price)).filter(Number.isFinite));
-
-  hours.forEach(item => {
-    const price = Number(item.price);
-    if (!Number.isFinite(price)) return;
-
-    const start = new Date(item.start);
-    const end = new Date(item.end);
-    const hour = start.getHours();
-    const isCurrent = now >= start.getTime() && now < end.getTime();
-    const isPast = isToday && end.getTime() <= now;
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "hour";
-    if (isCurrent) wrapper.classList.add("current");
-    if (isPast) wrapper.classList.add("past");
-
-    const barWrap = document.createElement("div");
-    barWrap.className = "hour-bar-wrap";
-
-    const bar = document.createElement("div");
-    bar.className = "hour-bar";
-    bar.style.height = `${Math.max(3, (price / maxPrice) * 88)}px`;
-    bar.title = `${String(hour).padStart(2, "0")}:00 · ${money(price * 100)} öre/kWh`;
-    barWrap.appendChild(bar);
-
-    const priceLabel = document.createElement("div");
-    priceLabel.className = "hour-price";
-    priceLabel.textContent = money(price * 100);
-
-    const timeLabel = document.createElement("div");
-    timeLabel.className = "hour-time";
-    timeLabel.textContent = `${String(hour).padStart(2, "0")}`;
-
-    wrapper.append(barWrap, priceLabel, timeLabel);
-    grid.appendChild(wrapper);
-  });
-
-  if (!hours.length) {
-    const message = document.createElement("div");
-    message.className = "sub";
-    message.textContent = isToday ? "Dagens priser saknas" : "Morgondagens priser är ännu inte publicerade";
-    grid.appendChild(message);
-  }
-}
-
-function findCheapestNightCharge() {
-  const timeElement = document.getElementById("charge-time");
-  const priceElement = document.getElementById("charge-price");
-
-  const intervals = [
-    ...validIntervals(todayData),
-    ...validIntervals(tomorrowData)
-  ].sort((a, b) => new Date(a.start) - new Date(b.start));
-
-  const now = Date.now();
-  const candidates = [];
-
-  // Search 22:00–07:00, including a window that crosses midnight.
-  // Each candidate must contain 12 consecutive 15-minute intervals.
-  for (let i = 0; i <= intervals.length - 12; i++) {
-    const window = intervals.slice(i, i + 12);
-    const firstStart = new Date(window[0].start);
-    const lastEnd = new Date(window[11].end);
-
-    if (new Date(window[0].start).getTime() <= now) continue;
-
-    const startHour = Number(new Intl.DateTimeFormat("en-GB", {
-      timeZone: TIME_ZONE, hour: "2-digit", hourCycle: "h23"
-    }).format(firstStart));
-
-    const endHour = Number(new Intl.DateTimeFormat("en-GB", {
-      timeZone: TIME_ZONE, hour: "2-digit", hourCycle: "h23"
-    }).format(lastEnd));
-
-    const startsInNight = startHour >= 22 || startHour < 7;
-    const endsInNight = endHour <= 7 || endHour === 0;
-    if (!startsInNight || !endsInNight) continue;
-
-    let continuous = true;
-    for (let j = 1; j < window.length; j++) {
-      if (new Date(window[j - 1].end).getTime() !== new Date(window[j].start).getTime()) {
-        continuous = false;
-        break;
-      }
-    }
-    if (!continuous) continue;
-
-    const values = window.map(intervalPrice);
-    if (!values.every(Number.isFinite)) continue;
-
-    const average = values.reduce((sum, value) => sum + value, 0) / values.length;
-    candidates.push({ start: firstStart, end: lastEnd, average });
-  }
-
-  if (!candidates.length) {
-    timeElement.textContent = "--:--";
-    priceElement.textContent = tomorrowData
-      ? "Ingen komplett nattperiod hittades"
-      : "Väntar på morgondagens priser";
-    return;
-  }
-
-  candidates.sort((a, b) => a.average - b.average);
-  const best = candidates[0];
-  const formatTime = date => new Intl.DateTimeFormat("sv-SE", {
-    timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit"
-  }).format(date);
-
-  timeElement.textContent = `${formatTime(best.start)}–${formatTime(best.end)}`;
-  priceElement.textContent = `Snitt ${money(best.average * 100)} öre/kWh`;
-}
-
-function renderDashboard() {
-  updateHeader();
-  updateCurrentPrice();
-  renderDayGrid(todayData, "today-grid", true);
-  renderDayGrid(tomorrowData, "tomorrow-grid", false);
-  findCheapestNightCharge();
-
-  const status = document.getElementById("status");
-  if (todayData && tomorrowData) {
-    status.textContent = "Priserna är uppdaterade · dagens och morgondagens priser visas";
-  } else if (todayData) {
-    status.textContent = "Dagens priser visas. Morgondagens priser är ännu inte publicerade (brukar komma omkring kl. 13).";
-  } else {
-    status.textContent = "Kunde inte hämta dagens priser. Kontrollera anslutningen eller försök igen senare.";
-  }
-}
-
-async function loadPrices() {
-  const status = document.getElementById("status");
-  status.textContent = "Hämtar elpriser...";
-
-  // Fetch independently: a missing tomorrow response must never hide today's prices.
-  const [todayResult, tomorrowResult] = await Promise.allSettled([
-    fetchPrices(API_TODAY),
-    fetchPrices(API_TOMORROW)
-  ]);
-
-  todayData = todayResult.status === "fulfilled" ? todayResult.value : null;
-  tomorrowData = tomorrowResult.status === "fulfilled" ? tomorrowResult.value : null;
-
-  if (todayResult.status === "rejected") {
-    console.error("Kunde inte hämta dagens priser:", todayResult.reason);
-  }
-  if (tomorrowResult.status === "rejected") {
-    console.info("Morgondagens priser är ännu inte tillgängliga eller kunde inte hämtas:", tomorrowResult.reason);
-  }
-
-  renderDashboard();
-}
-
-updateHeader();
-loadPrices();
-setInterval(loadPrices, 15 * 60 * 1000);
-setInterval(updateHeader, 60 * 1000);
-setInterval(() => {
-  if (todayData) renderDashboard();
-}, 60 * 1000);
+updateHeader();loadPrices();loadSolar();
+setInterval(loadPrices,15*60*1000);setInterval(loadSolar,60*60*1000);setInterval(updateHeader,60*1000);setInterval(()=>{if(todayData)render()},60*1000);
 </script>
 </body>
 </html>
